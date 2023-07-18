@@ -1,0 +1,19 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/psf/black # Black formats the Python code
+    rev: 23.7.0
+    hooks:
+      - id: black
+  - repo: https://github.com/pycqa/flake8 # Flake8 lints the Python code
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-isort # isort sorts the imports
+    rev: v5.10.1
+    hooks:
+      - id: isort

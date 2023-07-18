@@ -2,36 +2,40 @@ import typer
 
 app = typer.Typer()
 
-# To go elsewhere little endian
+
+# TODO move to helpers
 def le(byte_str):
     n = 0
     for index, byte in enumerate(byte_str):
-        n += (byte << (index * 8))
+        n += byte << (index * 8)
     return n
 
+
 @app.command()
-def rotate(infile: str, outfile:str):
-    with open(infile, 'rb') as f:
+def rotate(infile: str, outfile: str):
+    with open(infile, "rb") as f:
         data = f.read()
 
-    assert data[:2] == b'BM'
-    
-    offset, width, height = le(data[10:14]), le(data[18:22]), le(data[22:26])
+    assert data[:2] == b"BM"
+    # TODO check if these are consistent between bmp fomats
+    # add height le(data[22:26])
+    offset, width = le(data[10:14]), le(data[18:22])
 
-# Iterate in the expected order for *rotated* pixels
-# look up corresponding *source* pixel, and append to `tpixels`
+    # Iterate in the expected order for *rotated* pixels
+    # look up corresponding *source* pixel, and append to `tpixels`
     spixels = data[offset:]
-    tpixels = [] # TODO: currently only BGR triples - what about alpha?
-    for ty in range(width): # TODO what should these be for non-squares?
+    tpixels = []  # TODO: currently only BGR triples - what about alpha?
+    for ty in range(width):  # TODO what should these be for non-squares?
         for tx in range(width):
             sy = tx
-            sx = width - ty- 1
+            sx = width - ty - 1
             n = 3 * (sy * width + sx)
-            tpixels.append(spixels[n:n+3])
-    
-    with open(outfile, 'wb') as f:
+            tpixels.append(spixels[n : n + 3])
+
+    with open(outfile, "wb") as f:
         f.write(data[:offset])
-        f.write(b''.join(tpixels))
+        f.write(b"".join(tpixels))
+
 
 if __name__ == "__main__":
     app()
