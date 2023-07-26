@@ -3,6 +3,8 @@ from enum import Enum
 import typer
 from typing_extensions import Annotated
 
+from .helpers import le
+
 app = typer.Typer(
     help="""
     imadj is short for IMage ADJust.\n\nimadj is a utility that allows you to
@@ -20,14 +22,6 @@ class Rotation(str, Enum):
 class Flip(str, Enum):
     horizontal = "horizontal"
     vertical = "vertical"
-
-
-# TODO move to helpers
-def le(byte_str):
-    n = 0
-    for index, byte in enumerate(byte_str):
-        n += byte << (index * 8)
-    return n
 
 
 # TODO check if these are consistent between bmp fomats
