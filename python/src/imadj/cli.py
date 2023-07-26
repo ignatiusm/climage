@@ -3,7 +3,7 @@ from enum import Enum
 import typer
 from typing_extensions import Annotated
 
-from .helpers import le
+from .helpers import le_bytes_to_int
 
 app = typer.Typer(
     help="""
@@ -25,9 +25,9 @@ class Flip(str, Enum):
 
 
 # TODO check if these are consistent between bmp fomats
-# add height le(data[22:26])
+# add height le_bytes_to_int(data[22:26])
 def parse_header(data: bytes) -> (bytes, int, int):
-    offset, width = le(data[10:14]), le(data[18:22])
+    offset, width = le_bytes_to_int(data[10:14]), le_bytes_to_int(data[18:22])
     spixels = data[offset:]
     return spixels, offset, width
 

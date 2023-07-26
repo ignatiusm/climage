@@ -1,7 +1,7 @@
 # Helper functions
 
 
-def le(byte_str):
+def le_bytes_to_int(byte_str):
     """
     Converts a LITTLE ENDIAN bytestring into an integer
     """
