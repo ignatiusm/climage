@@ -8,7 +8,7 @@ from .helpers import le_bytes_to_int
 app = typer.Typer(
     help="""
     imadj is short for IMage ADJust.\n\nimadj is a utility that allows you to
-    rotate a windows bitmap image file 90 degrees to the left.
+    rotate a windows bitmap image file 90 degrees to the right.
     """
 )
 
@@ -88,7 +88,7 @@ def cli(
         f.write(data[:offset])
         f.write(b"".join(adjusted_pixels))
 
-    print(f"{infile} rotated left 90 degrees and saved as {outfile}")
+    print(f"{infile} rotated right 90 degrees and saved as {outfile}")
 
 
 if __name__ == "__main__":
