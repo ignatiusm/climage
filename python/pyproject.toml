@@ -5,6 +5,11 @@ description = "Image adjustment software"
 authors = ["ignatiusm"]
 readme = "README.md"
 
+[tool.poetry.scripts]
+imadj = "imadj.cli:app"
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
 [tool.poetry.dependencies]
 python = "^3.10"
 typer = {extras = ["all"], version = "^0.9.0"}
@@ -14,6 +19,8 @@ pre-commit = "^3.3.3"
 black = "^23.7.0"
 isort = "^5.12.0"
 flake8 = "^6.0.0"
+pytest = "^7.4.0"
+pytest-watch = "^4.2.0"
 
 
 [build-system]
