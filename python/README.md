@@ -7,4 +7,4 @@ A command-line interface (CLI) for rotating and fliping `.bmp` image files
 - `poetry run imadj --help` for guidance on CLI options
 
 ## For development
-- `ptw tests/*.py --run 'pytest'` to automatically run tests when files change
+- `ptw --run 'pytest'` to automatically run tests when any python files change

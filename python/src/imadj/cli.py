@@ -45,6 +45,13 @@ def adjust_bytes(spixels: bytes, width: int) -> bytes:
     return tpixels
 
 
+def rotate_right(data):
+    source_pixels, offset, width = parse_header(data)
+    # TODO add rotate.value, flip.value parameters
+    target_pixels = adjust_bytes(source_pixels, width)
+    return target_pixels, offset
+
+
 @app.command()
 def cli(
     infile: Annotated[
@@ -75,13 +82,11 @@ def cli(
 
     assert data[:2] == b"BM"
 
-    spixels, offset, width = parse_header(data)
-    # TODO add rotate.value, flip.value parameters
-    tpixels = adjust_bytes(spixels, width)
+    adjusted_pixels, offset = rotate_right(data)
 
     with open(outfile, "wb") as f:
         f.write(data[:offset])
-        f.write(b"".join(tpixels))
+        f.write(b"".join(adjusted_pixels))
 
     print(f"{infile} rotated left 90 degrees and saved as {outfile}")
 
