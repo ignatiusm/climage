@@ -1,3 +1,4 @@
+import math
 from enum import Enum
 
 import typer
@@ -40,6 +41,10 @@ def parse_file(data: bytes) -> (bytes, int, int):
     return spixels, offset, width, height, bits_per_pixel
 
 
+def pad_bytes(dimension: int) -> int:
+    return math.ceil(dimension / 4) * 4
+
+
 def adjust_header(data: bytes, offset: int, rotation: str) -> bytes:
     if rotation in "right|left":
         new_header = (
@@ -62,36 +67,56 @@ def adjust_pixels(
 ) -> bytes:
     # Iterate in the expected order for *rotated* pixels
     # look up corresponding *source* pixel, and append to `tpixels`
-    tpixels = []  # TODO: currently only 24 colour depth
-    for ty in range(width):  # TODO need to adjust bmp header for non-square files
-        for tx in range(height):
-            if rotation == "right":
+    tpixels = []
+    # TODO: currently only 24 colour depth
+    pixel_format = bits_per_pixel // 8
+    if rotation == "right":
+        for ty in range(width):
+            for tx in range(height):
                 sy = tx
                 sx = width - ty - 1
-                n = (bits_per_pixel // 8) * (sy * width + sx)
-                tpixels.append(spixels[n : n + (bits_per_pixel // 8)])
-            elif rotation == "left":
+                n = pixel_format * (sy * pad_bytes(width) + sx)
+                tpixels.append(spixels[n : n + pixel_format])
+                # Add padding if required
+                if tx == height - 1:
+                    padding_size = (
+                        pad_bytes(height * pixel_format) - height * pixel_format
+                    )
+                    if padding_size > 0:
+                        for _ in range(padding_size):
+                            tpixels.append(b"\xff")
+    elif rotation == "left":
+        for ty in range(width):
+            for tx in range(height):
                 sx = ty
                 sy = width - tx - 1
-                n = (bits_per_pixel // 8) * (sy * height + sx)
-                tpixels.append(spixels[n : n + (bits_per_pixel // 8)])
-            elif rotation == "half":
+                n = pixel_format * (sy * height + sx)
+                tpixels.append(spixels[n : n + pixel_format])
+    elif rotation == "half":
+        for ty in range(height):
+            for tx in range(width):
                 sx = width - tx - 1
                 # probably should be height, but we're just dealing with
                 # square images at the moment
                 sy = width - ty - 1
-                n = (bits_per_pixel // 8) * (sy * width + sx)
-                tpixels.append(spixels[n : n + (bits_per_pixel // 8)])
+                n = pixel_format * (sy * width + sx)
+                tpixels.append(spixels[n : n + pixel_format])
+                # Add padding if required
+    #                if tx == width - 1:
+    #                    row_size = math.floor((bits_per_pixel * width + 31) / 32) * 4
+    #                    padding_size = row_size - (width * pixel_format)
+    #                    if padding_size > 0:
+    #                        tpixels.append(b"0" * padding_size)
     return tpixels
 
 
 def rotate_bmp(data, rotation):
     source_pixels, offset, width, height, bits_per_pixel = parse_file(data)
     # TODO add rotate.value, flip.value parameters
-    new_header = adjust_header(data, offset, rotation)
     target_pixels = adjust_pixels(
         source_pixels, width, height, bits_per_pixel, rotation
     )
+    new_header = adjust_header(data, offset, rotation)
     return target_pixels, new_header
 
 
