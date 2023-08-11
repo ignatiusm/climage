@@ -5,42 +5,42 @@ from imadj import cli
 
 @pytest.fixture
 def mock_original_bmp_image():
-    with open("tests/teapot_original.bmp", "rb") as f:
+    with open("../data/bmp/teapot_original.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
 def mock_rotate_right_bmp_image():
-    with open("tests/teapot_right.bmp", "rb") as f:
+    with open("../data/bmp/teapot_right.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
 def mock_rotate_left_bmp_image():
-    with open("tests/teapot_left.bmp", "rb") as f:
+    with open("../data/bmp/teapot_left.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
 def mock_rotate_half_bmp_image():
-    with open("tests/teapot_half.bmp", "rb") as f:
+    with open("../data/bmp/teapot_half.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
 def mock_rectangle_bmp_image():
-    with open("tests/rectangle.bmp", "rb") as f:
+    with open("../data/bmp/rectangle.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
 def mock_rotate_rectangle_right_bmp_image():
-    with open("tests/rectangle_right.bmp", "rb") as f:
+    with open("../data/bmp/rectangle_right.bmp", "rb") as f:
         data = f.read()
     return data
 

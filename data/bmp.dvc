@@ -1,0 +1,6 @@
+outs:
+- md5: 712e00af2061a6e09e48580149143e9b.dir
+  size: 2769280
+  nfiles: 6
+  hash: md5
+  path: bmp

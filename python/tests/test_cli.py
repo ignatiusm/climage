@@ -17,15 +17,15 @@ def file_contents_are_identical(file1, file2):
 @pytest.mark.parametrize(
     "rotation, infile, outfile",
     [
-        ("left", "tests/teapot_original.bmp", "tests/teapot_left.bmp"),
-        ("right", "tests/teapot_original.bmp", "tests/teapot_right.bmp"),
-        ("half", "tests/teapot_original.bmp", "tests/teapot_half.bmp"),
-        ("right", "tests/rectangle.bmp", "tests/rectangle_right.bmp"),
+        ("left", "../data/bmp/teapot_original.bmp", "../data/bmp/teapot_left.bmp"),
+        ("right", "../data/bmp/teapot_original.bmp", "../data/bmp/teapot_right.bmp"),
+        ("half", "../data/bmp/teapot_original.bmp", "../data/bmp/teapot_half.bmp"),
+        ("right", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_right.bmp"),
     ],
 )
 def test_cli(rotation, infile, outfile):
     INFILE = infile
-    OUTFILE = "tests/cli_result.bmp"
+    OUTFILE = "../data/bmp/cli_result.bmp"
     TESTFILE = outfile
     result = runner.invoke(app, [INFILE, OUTFILE, "--rotate", rotation])
     assert result.exit_code == 0
