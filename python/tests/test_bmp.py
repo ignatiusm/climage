@@ -4,58 +4,77 @@ from imadj import cli
 
 
 @pytest.fixture
-def mock_original_bmp_image():
-    with open("../data/bmp/teapot_original.bmp", "rb") as f:
+def mock_bmp_square():
+    with open("../data/bmp/teapot.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
-def mock_rotate_right_bmp_image():
+def mock_bmp_rotate_square_right():
     with open("../data/bmp/teapot_right.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
-def mock_rotate_left_bmp_image():
+def mock_bmp_rotate_square_left():
     with open("../data/bmp/teapot_left.bmp", "rb") as f:
         data = f.read()
     return data
 
 
 @pytest.fixture
-def mock_rotate_half_bmp_image():
+def mock_bmp_rotate_square_half():
     with open("../data/bmp/teapot_half.bmp", "rb") as f:
         data = f.read()
     return data
 
 
-def test_rotate_right_is_equal_to_example(
-    mock_original_bmp_image, mock_rotate_right_bmp_image, rotation="right"
-):
-    assert mock_original_bmp_image[:2] == b"BM"
-    adjusted_pixels, offset = cli.rotate_bmp(mock_original_bmp_image, rotation)
-    assert (
-        mock_original_bmp_image[:offset] + (b"".join(adjusted_pixels))
-    ) == mock_rotate_right_bmp_image
+@pytest.fixture
+def mock_bmp_rectangle():
+    with open("../data/bmp/rectangle.bmp", "rb") as f:
+        data = f.read()
+    return data
 
 
-def test_rotate_left_is_equal_to_example(
-    mock_original_bmp_image, mock_rotate_left_bmp_image, rotation="left"
-):
-    assert mock_original_bmp_image[:2] == b"BM"
-    adjusted_pixels, offset = cli.rotate_bmp(mock_original_bmp_image, rotation)
-    assert (
-        mock_original_bmp_image[:offset] + (b"".join(adjusted_pixels))
-    ) == mock_rotate_left_bmp_image
+@pytest.fixture
+def mock_bmp_rotate_rectangle_right():
+    with open("../data/bmp/rectangle_right.bmp", "rb") as f:
+        data = f.read()
+    return data
 
 
-def test_rotate_half_is_equal_to_example(
-    mock_original_bmp_image, mock_rotate_half_bmp_image, rotation="half"
-):
-    assert mock_original_bmp_image[:2] == b"BM"
-    adjusted_pixels, offset = cli.rotate_bmp(mock_original_bmp_image, rotation)
-    assert (
-        mock_original_bmp_image[:offset] + (b"".join(adjusted_pixels))
-    ) == mock_rotate_half_bmp_image
+@pytest.fixture
+def mock_bmp_rotate_rectangle_left():
+    with open("../data/bmp/rectangle_left.bmp", "rb") as f:
+        data = f.read()
+    return data
+
+
+@pytest.fixture
+def mock_bmp_rotate_rectangle_half():
+    with open("../data/bmp/rectangle_half.bmp", "rb") as f:
+        data = f.read()
+    return data
+
+
+@pytest.mark.parametrize(
+    "rotation, mock_infile, mock_outfile",
+    [
+        ("left", "mock_bmp_square", "mock_bmp_rotate_square_left"),
+        ("right", "mock_bmp_square", "mock_bmp_rotate_square_right"),
+        ("half", "mock_bmp_square", "mock_bmp_rotate_square_half"),
+        ("left", "mock_bmp_rectangle", "mock_bmp_rotate_rectangle_left"),
+        ("right", "mock_bmp_rectangle", "mock_bmp_rotate_rectangle_right"),
+        ("half", "mock_bmp_rectangle", "mock_bmp_rotate_rectangle_half"),
+    ],
+)
+def test_bmp(rotation, mock_infile, mock_outfile, request):
+    assert request.getfixturevalue(mock_infile)[:2] == b"BM"
+    adjusted_pixels, new_header = cli.rotate_bmp(
+        request.getfixturevalue(mock_infile), rotation
+    )
+    assert (new_header + (b"".join(adjusted_pixels))) == request.getfixturevalue(
+        mock_outfile
+    )

@@ -15,17 +15,20 @@ def file_contents_are_identical(file1, file2):
 
 
 @pytest.mark.parametrize(
-    "rotation, testfile",
+    "rotation, infile, outfile",
     [
-        ("left", "../data/bmp/teapot_left.bmp"),
-        ("right", "../data/bmp/teapot_right.bmp"),
-        ("half", "../data/bmp/teapot_half.bmp"),
+        ("left", "../data/bmp/teapot.bmp", "../data/bmp/teapot_left.bmp"),
+        ("right", "../data/bmp/teapot.bmp", "../data/bmp/teapot_right.bmp"),
+        ("half", "../data/bmp/teapot.bmp", "../data/bmp/teapot_half.bmp"),
+        ("left", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_left.bmp"),
+        ("right", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_right.bmp"),
+        ("half", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_half.bmp"),
     ],
 )
-def test_cli(rotation, testfile):
-    INFILE = "../data/bmp/teapot_original.bmp"
+def test_cli(rotation, infile, outfile):
+    INFILE = infile
     OUTFILE = "../data/bmp/cli_result.bmp"
-    TESTFILE = testfile
+    TESTFILE = outfile
     result = runner.invoke(app, [INFILE, OUTFILE, "--rotate", rotation])
     assert result.exit_code == 0
     assert f"{INFILE} rotated {rotation} and saved as {OUTFILE}" in result.stdout
