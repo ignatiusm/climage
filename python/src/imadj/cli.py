@@ -77,7 +77,7 @@ def adjust_pixels(
                 sx = width - ty - 1
                 n = pixel_format * (sy * pad_bytes(width) + sx)
                 tpixels.append(spixels[n : n + pixel_format])
-                # Add padding if required
+                # Add padding if last pixel in row
                 if tx == height - 1:
                     padding_size = (
                         pad_bytes(height * pixel_format) - height * pixel_format
@@ -89,24 +89,32 @@ def adjust_pixels(
         for ty in range(width):
             for tx in range(height):
                 sx = ty
-                sy = width - tx - 1
-                n = pixel_format * (sy * height + sx)
+                sy = height - tx - 1
+                n = pixel_format * (sy * pad_bytes(width) + sx)
                 tpixels.append(spixels[n : n + pixel_format])
+                # Add padding if last pixel in row
+                if tx == height - 1:
+                    padding_size = (
+                        pad_bytes(height * pixel_format) - height * pixel_format
+                    )
+                    if padding_size > 0:
+                        for _ in range(padding_size):
+                            tpixels.append(b"\xff")
     elif rotation == "half":
         for ty in range(height):
             for tx in range(width):
                 sx = width - tx - 1
-                # probably should be height, but we're just dealing with
-                # square images at the moment
-                sy = width - ty - 1
-                n = pixel_format * (sy * width + sx)
+                sy = height - ty - 1
+                n = pixel_format * (sy * pad_bytes(width) + sx)
                 tpixels.append(spixels[n : n + pixel_format])
-                # Add padding if required
-    #                if tx == width - 1:
-    #                    row_size = math.floor((bits_per_pixel * width + 31) / 32) * 4
-    #                    padding_size = row_size - (width * pixel_format)
-    #                    if padding_size > 0:
-    #                        tpixels.append(b"0" * padding_size)
+                # Add padding if last pixel in row
+                if tx == width - 1:
+                    padding_size = (
+                        pad_bytes(width * pixel_format) - width * pixel_format
+                    )
+                    if padding_size > 0:
+                        for _ in range(padding_size):
+                            tpixels.append(b"\xff")
     return tpixels
 
 

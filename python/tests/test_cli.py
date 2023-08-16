@@ -17,10 +17,12 @@ def file_contents_are_identical(file1, file2):
 @pytest.mark.parametrize(
     "rotation, infile, outfile",
     [
-        ("left", "../data/bmp/teapot_original.bmp", "../data/bmp/teapot_left.bmp"),
-        ("right", "../data/bmp/teapot_original.bmp", "../data/bmp/teapot_right.bmp"),
-        ("half", "../data/bmp/teapot_original.bmp", "../data/bmp/teapot_half.bmp"),
+        ("left", "../data/bmp/teapot.bmp", "../data/bmp/teapot_left.bmp"),
+        ("right", "../data/bmp/teapot.bmp", "../data/bmp/teapot_right.bmp"),
+        ("half", "../data/bmp/teapot.bmp", "../data/bmp/teapot_half.bmp"),
+        ("left", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_left.bmp"),
         ("right", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_right.bmp"),
+        ("half", "../data/bmp/rectangle.bmp", "../data/bmp/rectangle_half.bmp"),
     ],
 )
 def test_cli(rotation, infile, outfile):
