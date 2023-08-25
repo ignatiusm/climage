@@ -25,6 +25,9 @@ dvc = {extras = ["s3"], version = "^3.15.0"}
 fastapi = "^0.101.1"
 uvicorn = {extras = ["standard"], version = "^0.23.2"}
 python-multipart = "^0.0.6"
+coverage = "^7.3.0"
+pytest-cov = "^4.1.0"
+httpx = "^0.24.1"
 
 
 [build-system]
