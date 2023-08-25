@@ -12,6 +12,6 @@ A command-line interface (CLI) for rotating and fliping `.bmp` image files
 ## API
 
 ImAdj has a minimal api.
-Serve it with hot reloading using `uvicorn imadj.main:app --reload`.
+Serve it with hot reloading using `uvicorn imadj.server:app --reload`.
 
 Visit `localhost:8000` in your browser.

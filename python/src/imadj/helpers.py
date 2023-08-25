@@ -1,4 +1,16 @@
 # Helper functions
+from enum import Enum
+
+
+class RotationEnum(str, Enum):
+    left = "left"
+    right = "right"
+    half = "half"
+
+
+class FlipEnum(str, Enum):
+    horizontal = "horizontal"
+    vertical = "vertical"
 
 
 def le_bytes_to_int(byte_str):

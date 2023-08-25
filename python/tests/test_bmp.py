@@ -1,6 +1,6 @@
 import pytest
 
-from imadj import cli
+from imadj import core
 
 
 @pytest.fixture
@@ -72,7 +72,7 @@ def mock_bmp_rotate_rectangle_half():
 )
 def test_bmp(rotation, mock_infile, mock_outfile, request):
     assert request.getfixturevalue(mock_infile)[:2] == b"BM"
-    adjusted_pixels, new_header = cli.rotate_bmp(
+    adjusted_pixels, new_header = core.rotate_bmp(
         request.getfixturevalue(mock_infile), rotation
     )
     assert (new_header + (b"".join(adjusted_pixels))) == request.getfixturevalue(
