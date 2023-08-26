@@ -1,0 +1,49 @@
+name: Lint and test Python code
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'python/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'python/**'
+
+jobs:
+  lint_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.7
+
+      - name: Install Poetry
+        working-directory: python
+        uses: snok/install-poetry@v1
+
+      - name: Install libraries
+        working-directory: python
+        run: poetry install
+
+      - name: Check formatting
+        working-directory: python
+        run: |
+          black --check .
+          isort --recursive --check-only --diff
+
+      - name: run Flake8 from base dir as that is where .flake8 lives
+        run: flake8 python
+
+      - name: Pull test data from dvc
+        uses: iterative/setup-dvc@v1
+        run: AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY}} dvc pull
+
+      - name: Run tests
+        working-directory: python
+        run: poetry run python -m pytest --cov
