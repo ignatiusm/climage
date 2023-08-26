@@ -40,8 +40,10 @@ jobs:
       - name: run Flake8 from base dir as that is where .flake8 lives
         run: flake8 python
 
-      - name: Pull test data from dvc
+      - name: Setup dvc
         uses: iterative/setup-dvc@v1
+
+      - name: Pull test data from dvc
         run: AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY}} dvc pull
 
       - name: Run tests
