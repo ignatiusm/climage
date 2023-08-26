@@ -1,6 +1,6 @@
 import math
 
-from .helpers import le_bytes_to_int
+from imadj.helpers import le_bytes_to_int
 
 OFFSET = (10, 14)
 WIDTH = (18, 22)

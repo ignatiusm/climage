@@ -1,9 +1,7 @@
-from enum import Enum
-
 import typer
+from imadj.core import adjust_image
+from imadj.helpers import RotationEnum
 from typing_extensions import Annotated
-
-from .bmp import rotate_bmp
 
 app = typer.Typer(
     help="""
@@ -11,17 +9,6 @@ app = typer.Typer(
     rotate a windows bitmap image file 90 degrees to the right.
     """
 )
-
-
-class Rotation(str, Enum):
-    left = "left"
-    right = "right"
-    half = "half"
-
-
-class Flip(str, Enum):
-    horizontal = "horizontal"
-    vertical = "vertical"
 
 
 @app.command()
@@ -42,24 +29,17 @@ def cli(
             envvar="OUTFILE",
         ),
     ],
-    rotate: Annotated[Rotation, typer.Option(case_sensitive=False)],
-    # flip: Annotated[Flip, typer.Option(case_sensitive=False)],
+    rotate: Annotated[RotationEnum, typer.Option(case_sensitive=False)],
+    # flip: Annotated[FlipEnum, typer.Option(case_sensitive=False)],
 ):
     """ """
-    # TODO add test to check if infile and outfile are identical and warn
     # (allow interactivity?)
-
+    # TODO add test to check if infile and outfile are identical and warn
     with open(infile, "rb") as f:
         data = f.read()
 
-    # Test if file is .bmp
-    assert data[:2] == b"BM"
-
-    adjusted_pixels, new_header = rotate_bmp(data, rotate.value)
-
     with open(outfile, "wb") as f:
-        f.write(new_header)
-        f.write(b"".join(adjusted_pixels))
+        f.write(adjust_image(data, rotate))
 
     print(f"{infile} rotated {rotate.value} and saved as {outfile}")
 
