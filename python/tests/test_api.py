@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 from imadj.server import app
 
@@ -10,11 +11,23 @@ def test_healthcheck():
     assert response.json() == {"status": "I'm fine, thanks for asking!"}
 
 
-def test_create_item():
+@pytest.mark.parametrize(
+    "rotation, mock_infile, mock_outfile",
+    [
+        ("left", "mock_bmp_square", "mock_bmp_rotate_square_left"),
+        ("right", "mock_bmp_square", "mock_bmp_rotate_square_right"),
+        ("half", "mock_bmp_square", "mock_bmp_rotate_square_half"),
+        ("left", "mock_bmp_rectangle", "mock_bmp_rotate_rectangle_left"),
+        ("right", "mock_bmp_rectangle", "mock_bmp_rotate_rectangle_right"),
+        ("half", "mock_bmp_rectangle", "mock_bmp_rotate_rectangle_half"),
+    ],
+)
+def test_create_item(rotation, mock_infile, mock_outfile, request):
     response = client.post(
-        "/api/adjust_image/?rotate=left",
+        f"/api/adjust_image/?rotate={rotation}",
         files={
-            "infile": ("teapot.bmp", open("../data/bmp/teapot.bmp", "rb"), "image/bmp")
+            "infile": (mock_infile, request.getfixturevalue(mock_infile), "image/bmp")
         },
     )
     assert response.status_code == 200
+    assert response.content == request.getfixturevalue(mock_outfile)
