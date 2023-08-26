@@ -1,14 +1,8 @@
 name: Lint and test Python code
 on:
   push:
-    branches:
-      - main
-        #    paths:
-        #      - 'python/**'
-  pull_request:
-      - main
-        #    paths:
-        #      - 'python/**'
+    branches: [ main ]
+  pull_request: [ main ]
 
 jobs:
   lint_and_test:
