@@ -2,7 +2,7 @@ name: Lint and test Python code
 on:
   push:
     branches: [ main ]
-  pull_request: [ main ]
+    pull_request: [ main ]
 
 jobs:
   lint_and_test:
