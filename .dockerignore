@@ -1,0 +1,4 @@
+data
+python/.pytest_cache
+python/.venv
+python/.coverage
