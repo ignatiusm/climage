@@ -1,2 +1,7 @@
 python/src/imadj/__pycache__/
 python/tests/__pycache__/
+
+# terraform
+terraform/dev/.terraform
+terraform/dev/*.tfstate
+terraform/dev/*.tfstate.backup
