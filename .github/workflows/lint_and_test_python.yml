@@ -1,0 +1,42 @@
+name: Lint and test Python code
+
+on: push
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.10.7
+    - uses: pre-commit/action@v3.0.0
+
+  run_tests:
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.7
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install libraries
+        working-directory: python
+        run: poetry install
+
+      - name: Setup dvc
+        uses: iterative/setup-dvc@v1
+
+      - name: Pull test data from dvc
+        run: AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY}} dvc pull
+
+      - name: Run tests
+        working-directory: python
+        run: poetry run python -m pytest --cov
