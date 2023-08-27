@@ -14,3 +14,11 @@ run:
 ## Run docker image to serve the assets
 serve:
 	docker run --rm -it -u $$(id -u):$$(id -g) -p 8000:8000 $(IMAGE) uvicorn imadj.server:app --host 0.0.0.0
+
+caddy:
+	docker run --rm \
+		-p 80:80 \
+		-v ./frontend:/usr/share/caddy/ \
+		-v caddy-config:/config \
+		-v caddy_data:/data \
+		caddy:2
