@@ -13,6 +13,7 @@ jobs:
     - uses: pre-commit/action@v3.0.0
 
   lint_and_test:
+    needs: pre-commit
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
