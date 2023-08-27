@@ -3,14 +3,23 @@ name: Lint and test Python code
 on: push
 
 jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.10.7
+    - uses: pre-commit/action@v3.0.0
+
   lint_and_test:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3.10.7
 
@@ -20,15 +29,6 @@ jobs:
       - name: Install libraries
         working-directory: python
         run: poetry install
-
-      - name: Check formatting
-        working-directory: python
-        run: |
-          black --check .
-          isort --recursive --check-only --diff
-
-      - name: run Flake8 from base dir as that is where .flake8 lives
-        run: flake8 python
 
       - name: Setup dvc
         uses: iterative/setup-dvc@v1
