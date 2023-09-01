@@ -4,6 +4,7 @@ on: push
 
 jobs:
   pre-commit:
+    name: Pre-commit checks
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -14,6 +15,7 @@ jobs:
 
   run_tests:
     needs: pre-commit
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -43,7 +45,7 @@ jobs:
 
   build:
     needs: run_tests
-    name: Build Image
+    name: Build and push image
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
@@ -65,8 +67,8 @@ jobs:
 
     - name: Build, tag, and push image to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: imadj
+        ECR_REGISTRY: ::add-mask::${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: imadj-repo
         IMAGE_TAG: ${{ env.GITHUB_SHA_SHORT }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
