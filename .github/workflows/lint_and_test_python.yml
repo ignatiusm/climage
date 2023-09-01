@@ -1,6 +1,6 @@
 name: Lint and test Python code
 
-on: push
+on: workflow_dispatch
 
 jobs:
   pre-commit:

@@ -1,0 +1,73 @@
+name: Lint, Run tests, Build and Push docker image
+
+on: push
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: 3.10.7
+    - uses: pre-commit/action@v3.0.0
+
+  run_tests:
+    needs: pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10.7
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Install libraries
+        working-directory: python
+        run: poetry install
+
+      - name: Setup dvc
+        uses: iterative/setup-dvc@v1
+
+      - name: Pull test data from dvc
+        run: AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY}} dvc pull
+
+      - name: Run tests
+        working-directory: python
+        run: poetry run python -m pytest --cov
+
+  build:
+    needs: run_tests
+    name: Build Image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Set env
+      run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+
+    - name: Build, tag, and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: imadj
+        IMAGE_TAG: ${{ env.GITHUB_SHA_SHORT }}
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
